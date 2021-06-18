@@ -24,6 +24,13 @@ class Instrument(models.Model):
     def pre_save_handler(sender, instance, *args, **kwargs):
         instance.full_clean()
 
+    @property
+    def latest_price(self):
+        """The close price of the most recent bar."""
+        
+        price = self.prices.last()
+        if price: return price.close
+
 
 
 class Price(models.Model):
