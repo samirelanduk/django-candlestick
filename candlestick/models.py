@@ -1,3 +1,6 @@
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+import calendar
 from django.db import models
 from django.core.validators import RegexValidator
 from django.dispatch import receiver
@@ -44,3 +47,18 @@ class Price(models.Model):
     @receiver(pre_save)
     def pre_save_handler(sender, instance, *args, **kwargs):
         instance.full_clean()
+
+
+    @property
+    def end_timestamp(self):
+        """What is the timestamp at the end of the period represented by this
+        bar?"""
+
+        count, res = int(self.resolution[:-1] or 1), self.resolution[-1]
+        if res in "MY":
+            if res == "Y": count *= 12
+            dt = datetime.utcfromtimestamp(self.timestamp)
+            dt += relativedelta(months=count)
+            return calendar.timegm(dt.utctimetuple())
+        secs = count * {"s": 1, "m": 60, "H": 3600, "D": 86400, "W": 604800}[res]
+        return self.timestamp + secs
