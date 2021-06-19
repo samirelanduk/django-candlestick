@@ -1,6 +1,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import calendar
+import pytz
 from timezone_field import TimeZoneField
 from django.db import models
 from django.core.validators import RegexValidator
@@ -72,3 +73,29 @@ class Bar(models.Model):
             return calendar.timegm(dt.utctimetuple())
         secs = count * {"s": 1, "m": 60, "H": 3600, "D": 86400, "W": 604800}[res]
         return self.timestamp + secs
+    
+
+    @property
+    def datetime(self):
+        """Returns the timestamp as a Python datetime - naive if the instrument
+        has no timezone, aware if it does."""
+
+        if not self.instrument.timezone:
+            return datetime.utcfromtimestamp(self.timestamp)
+        else:
+            naive = datetime.utcfromtimestamp(self.timestamp)
+            utc = pytz.utc.localize(naive, is_dst=None)
+            return utc.astimezone(self.instrument.timezone)
+    
+
+    @property
+    def end_datetime(self):
+        """Returns the end timestamp as a Python datetime - naive if the
+        instrument has no timezone, aware if it does."""
+
+        if not self.instrument.timezone:
+            return datetime.utcfromtimestamp(self.end_timestamp)
+        else:
+            naive = datetime.utcfromtimestamp(self.end_timestamp)
+            utc = pytz.utc.localize(naive, is_dst=None)
+            return utc.astimezone(self.instrument.timezone)

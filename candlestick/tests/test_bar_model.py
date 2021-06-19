@@ -1,6 +1,9 @@
+from datetime import datetime
+import pytz
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from mixer.backend.django import mixer
+from unittest.mock import patch, PropertyMock
 from candlestick.models import Bar, Instrument
 
 class BarCreationTests(TestCase):
@@ -62,3 +65,56 @@ class EndTimestampTests(TestCase):
     def test_year_timestamps(self):
         self.assertEqual(mixer.blend(Bar, timestamp=50000, resolution="Y").end_timestamp, 31586000)
         self.assertEqual(mixer.blend(Bar, timestamp=50000, resolution="5Y").end_timestamp, 157816400)
+
+
+
+class StartDatetimeTests(TestCase):
+
+    def test_naive_start_datetime(self):
+        instrument = mixer.blend(Instrument)
+        bar = mixer.blend(Bar, timestamp=1222624800, resolution="H", instrument=instrument)
+        self.assertEqual(bar.datetime, datetime(2008, 9, 28, 18, 0, 0))
+    
+
+    def test_utc_start_datetime(self):
+        instrument = mixer.blend(Instrument, timezone="UTC")
+        bar = mixer.blend(Bar, timestamp=1222624800, resolution="H", instrument=instrument)
+        self.assertEqual(bar.datetime, datetime(2008, 9, 28, 18, 0, 0, tzinfo=pytz.UTC))
+    
+
+    def test_tz_start_datetime(self):
+        instrument = mixer.blend(Instrument, timezone="Europe/London")
+        bar = mixer.blend(Bar, timestamp=1222624800, resolution="H", instrument=instrument)
+        self.assertEqual(bar.datetime, pytz.timezone("Europe/London").localize(datetime(2008, 9, 28, 19, 0, 0)))
+
+
+
+class EndDatetimeTests(TestCase):
+
+    def setUp(self):
+        self.patch1 = patch("candlestick.models.Bar.end_timestamp", new_callable=PropertyMock)
+        mock_end = self.patch1.start()
+        mock_end.return_value = 1222624800
+    
+
+    def tearDown(self):
+        self.patch1.stop()
+
+
+    def test_naive_end_datetime(self):
+        instrument = mixer.blend(Instrument)
+        bar = mixer.blend(Bar, timestamp=0, resolution="H", instrument=instrument)
+        self.assertEqual(bar.end_datetime, datetime(2008, 9, 28, 18, 0, 0))
+        
+    
+
+    def test_utc_end_datetime(self):
+        instrument = mixer.blend(Instrument, timezone="UTC")
+        bar = mixer.blend(Bar, timestamp=0, resolution="H", instrument=instrument)
+        self.assertEqual(bar.end_datetime, datetime(2008, 9, 28, 18, 0, 0, tzinfo=pytz.UTC))
+    
+
+    def test_tz_end_datetime(self):
+        instrument = mixer.blend(Instrument, timezone="Europe/London")
+        bar = mixer.blend(Bar, timestamp=0, resolution="H", instrument=instrument)
+        self.assertEqual(bar.end_datetime, pytz.timezone("Europe/London").localize(datetime(2008, 9, 28, 19, 0, 0)))
