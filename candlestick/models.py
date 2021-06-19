@@ -24,16 +24,17 @@ class Instrument(models.Model):
     def pre_save_handler(sender, instance, *args, **kwargs):
         instance.full_clean()
 
+
     @property
     def latest_price(self):
         """The close price of the most recent bar."""
-        
-        price = self.prices.last()
-        if price: return price.close
+
+        bar = self.bars.last()
+        if bar: return bar.close
 
 
 
-class Price(models.Model):
+class Bar(models.Model):
     """The price of an instrument over some period of time."""
 
     class Meta:
@@ -46,7 +47,7 @@ class Price(models.Model):
     high = models.DecimalField(max_digits=9, decimal_places=5)
     close = models.DecimalField(max_digits=9, decimal_places=5)
     volume = models.IntegerField()
-    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, related_name="prices")
+    instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, related_name="bars")
 
     def __str__(self):
         return f"{self.timestamp}: {self.close}"

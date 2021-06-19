@@ -1,13 +1,13 @@
 from django.test import TestCase
 from mixer.backend.django import mixer
-from candlestick.models import Instrument, Price
+from candlestick.models import Instrument, Bar
 
 class InstrumentCreationTests(TestCase):
 
     def test_can_make_instrument(self):
         instrument = Instrument.objects.create(symbol="AAPL", currency="USD")
         self.assertEqual(str(instrument), "AAPL")
-        self.assertFalse(instrument.prices.all())
+        self.assertFalse(instrument.bars.all())
         self.assertEqual(instrument.category, None)
         self.assertEqual(instrument.exchange, None)
     
@@ -29,7 +29,7 @@ class InstrumentOrdering(TestCase):
 
 
 
-class InstrumentLatestPrice(TestCase):
+class InstrumentLatestBar(TestCase):
 
     def test_can_get_no_latest_price(self):
         instrument = mixer.blend(Instrument)
@@ -38,8 +38,8 @@ class InstrumentLatestPrice(TestCase):
 
     def test_can_get_latest_price(self):
         instrument = mixer.blend(Instrument)
-        mixer.blend(Price, timestamp=100, close=20, resolution="m", instrument=instrument)
-        mixer.blend(Price, timestamp=300, close=50, resolution="m", instrument=instrument)
-        mixer.blend(Price, timestamp=200, close=80, resolution="m", instrument=instrument)
-        mixer.blend(Price, timestamp=400, close=80, resolution="m")
+        mixer.blend(Bar, timestamp=100, close=20, resolution="m", instrument=instrument)
+        mixer.blend(Bar, timestamp=300, close=50, resolution="m", instrument=instrument)
+        mixer.blend(Bar, timestamp=200, close=80, resolution="m", instrument=instrument)
+        mixer.blend(Bar, timestamp=400, close=80, resolution="m")
         self.assertEqual(instrument.latest_price, 50)
