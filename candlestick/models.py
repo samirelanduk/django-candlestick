@@ -1,6 +1,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import calendar
+from timezone_field import TimeZoneField
 from django.db import models
 from django.core.validators import RegexValidator
 from django.dispatch import receiver
@@ -15,6 +16,7 @@ class Instrument(models.Model):
     symbol = models.CharField(max_length=10)
     exchange = models.CharField(max_length=20, blank=True, null=True)
     currency = models.CharField(max_length=20)
+    timezone = TimeZoneField(blank=True, null=True)
     category = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
