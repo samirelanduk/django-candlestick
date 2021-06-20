@@ -14,7 +14,7 @@ class BarCreationTests(TestCase):
             timestamp=1000, open=1, low=0, high=3, close=2, volume=10,
             resolution="30s", instrument=instrument
         )
-        self.assertEqual(str(bar), "1000: 2")
+        self.assertEqual(str(bar), "1000 (2)")
     
 
     def test_bar_resolution_validation(self):

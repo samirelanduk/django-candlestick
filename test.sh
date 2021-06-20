@@ -1,0 +1,1 @@
+DJANGO_SETTINGS_MODULE=candlestick.tests.test_settings python -m django test
