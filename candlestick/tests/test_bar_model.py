@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 import pytz
 from django.test import TestCase
 from django.core.exceptions import ValidationError
@@ -70,51 +70,22 @@ class EndTimestampTests(TestCase):
 
 class StartDatetimeTests(TestCase):
 
-    def test_naive_start_datetime(self):
-        instrument = mixer.blend(Instrument)
-        bar = mixer.blend(Bar, timestamp=1222624800, resolution="H", instrument=instrument)
-        self.assertEqual(bar.datetime, datetime(2008, 9, 28, 18, 0, 0))
-    
-
-    def test_utc_start_datetime(self):
+    @patch("candlestick.models.timestamp_to_datetime")
+    def test_start_datetime(self, mock_dt):
         instrument = mixer.blend(Instrument, timezone="UTC")
         bar = mixer.blend(Bar, timestamp=1222624800, resolution="H", instrument=instrument)
-        self.assertEqual(bar.datetime, datetime(2008, 9, 28, 18, 0, 0, tzinfo=pytz.UTC))
-    
-
-    def test_tz_start_datetime(self):
-        instrument = mixer.blend(Instrument, timezone="Europe/London")
-        bar = mixer.blend(Bar, timestamp=1222624800, resolution="H", instrument=instrument)
-        self.assertEqual(bar.datetime, pytz.timezone("Europe/London").localize(datetime(2008, 9, 28, 19, 0, 0)))
+        self.assertEqual(bar.datetime, mock_dt.return_value)
+        mock_dt.assert_called_with(1222624800, pytz.UTC, "H")
 
 
 
 class EndDatetimeTests(TestCase):
 
-    def setUp(self):
-        self.patch1 = patch("candlestick.models.Bar.end_timestamp", new_callable=PropertyMock)
-        mock_end = self.patch1.start()
-        mock_end.return_value = 1222624800
-    
-
-    def tearDown(self):
-        self.patch1.stop()
-
-
-    def test_naive_end_datetime(self):
-        instrument = mixer.blend(Instrument)
-        bar = mixer.blend(Bar, timestamp=0, resolution="H", instrument=instrument)
-        self.assertEqual(bar.end_datetime, datetime(2008, 9, 28, 18, 0, 0))
-        
-    
-
-    def test_utc_end_datetime(self):
+    @patch("candlestick.models.Bar.end_timestamp", new_callable=PropertyMock)
+    @patch("candlestick.models.timestamp_to_datetime")
+    def test_end_datetime(self, mock_dt, mock_end):
+        mock_end.return_value = 1000
         instrument = mixer.blend(Instrument, timezone="UTC")
-        bar = mixer.blend(Bar, timestamp=0, resolution="H", instrument=instrument)
-        self.assertEqual(bar.end_datetime, datetime(2008, 9, 28, 18, 0, 0, tzinfo=pytz.UTC))
-    
-
-    def test_tz_end_datetime(self):
-        instrument = mixer.blend(Instrument, timezone="Europe/London")
-        bar = mixer.blend(Bar, timestamp=0, resolution="H", instrument=instrument)
-        self.assertEqual(bar.end_datetime, pytz.timezone("Europe/London").localize(datetime(2008, 9, 28, 19, 0, 0)))
+        bar = mixer.blend(Bar, timestamp=1222624800, resolution="H", instrument=instrument)
+        self.assertEqual(bar.end_datetime, mock_dt.return_value)
+        mock_dt.assert_called_with(1000, pytz.UTC, "H")

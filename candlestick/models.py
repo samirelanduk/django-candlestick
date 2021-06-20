@@ -1,12 +1,12 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import calendar
-import pytz
 from timezone_field import TimeZoneField
 from django.db import models
 from django.core.validators import RegexValidator
 from django.dispatch import receiver
 from django.db.models.signals import pre_save
+from candlestick.utils import timestamp_to_datetime
 
 class Instrument(models.Model):
     """A tradeable entity."""
@@ -80,12 +80,9 @@ class Bar(models.Model):
         """Returns the timestamp as a Python datetime - naive if the instrument
         has no timezone, aware if it does."""
 
-        if not self.instrument.timezone:
-            return datetime.utcfromtimestamp(self.timestamp)
-        else:
-            naive = datetime.utcfromtimestamp(self.timestamp)
-            utc = pytz.utc.localize(naive, is_dst=None)
-            return utc.astimezone(self.instrument.timezone)
+        return timestamp_to_datetime(
+            self.timestamp, self.instrument.timezone, self.resolution
+        )
     
 
     @property
@@ -93,9 +90,6 @@ class Bar(models.Model):
         """Returns the end timestamp as a Python datetime - naive if the
         instrument has no timezone, aware if it does."""
 
-        if not self.instrument.timezone:
-            return datetime.utcfromtimestamp(self.end_timestamp)
-        else:
-            naive = datetime.utcfromtimestamp(self.end_timestamp)
-            utc = pytz.utc.localize(naive, is_dst=None)
-            return utc.astimezone(self.instrument.timezone)
+        return timestamp_to_datetime(
+            self.end_timestamp, self.instrument.timezone, self.resolution
+        )
