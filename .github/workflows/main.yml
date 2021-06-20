@@ -25,4 +25,4 @@ jobs:
           pip install coverage==4.5.4
       - name: Test
         run: |
-          coverage run --source=candlestick bash ./test.sh
+          DJANGO_SETTINGS_MODULE=candlestick.tests.test_settings python -m django test
