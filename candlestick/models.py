@@ -3,6 +3,7 @@ from dateutil.relativedelta import relativedelta
 import calendar
 from timezone_field import TimeZoneField
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.dispatch import receiver
 from django.db.models.signals import pre_save
@@ -38,7 +39,10 @@ class Instrument(models.Model):
 
 
 class Bar(models.Model):
-    """The price of an instrument over some period of time."""
+    """The price of an instrument over some period of time.
+    
+    If the resolution is D or above, the timestamp must be a UNIX midnight
+    timestamp."""
 
     class Meta:
         ordering = ["timestamp"]
@@ -58,6 +62,13 @@ class Bar(models.Model):
     @receiver(pre_save)
     def pre_save_handler(sender, instance, *args, **kwargs):
         instance.full_clean()
+    
+
+    def clean(self): 
+        if self.resolution[-1] in "DWMY" and self.timestamp % 86400:
+            raise ValidationError(
+                f"Timestamp {self.timestamp} is invalid for resolution {self.resolution}"
+            )
 
 
     @property

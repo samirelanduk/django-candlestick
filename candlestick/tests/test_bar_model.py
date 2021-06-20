@@ -26,6 +26,23 @@ class BarCreationTests(TestCase):
                     timestamp=1000, open=1, low=0, high=3, close=2, volume=10,
                     resolution=res, instrument=instrument
                 )
+    
+
+    def test_must_be_unix_midnight_if_res_over_D(self):
+        instrument = mixer.blend(Instrument)
+        Bar.objects.create(
+            timestamp=1000, open=1, low=0, high=3, close=2, volume=10,
+            resolution="H", instrument=instrument
+        )
+        Bar.objects.create(
+            timestamp=86400, open=1, low=0, high=3, close=2, volume=10,
+            resolution="D", instrument=instrument
+        )
+        with self.assertRaises(ValidationError):
+            Bar.objects.create(
+                timestamp=1000, open=1, low=0, high=3, close=2, volume=10,
+                resolution="D", instrument=instrument
+            )
 
 
 
@@ -51,20 +68,20 @@ class EndTimestampTests(TestCase):
         self.assertEqual(mixer.blend(Bar, timestamp=100, resolution="H").end_timestamp, 3700)
         self.assertEqual(mixer.blend(Bar, timestamp=100, resolution="1H").end_timestamp, 3700)
         self.assertEqual(mixer.blend(Bar, timestamp=100, resolution="6H").end_timestamp, 21700)
-        self.assertEqual(mixer.blend(Bar, timestamp=100, resolution="D").end_timestamp, 86500)
-        self.assertEqual(mixer.blend(Bar, timestamp=100, resolution="2D").end_timestamp, 172900)
-        self.assertEqual(mixer.blend(Bar, timestamp=100, resolution="W").end_timestamp, 604900)
-        self.assertEqual(mixer.blend(Bar, timestamp=100, resolution="4W").end_timestamp, 2419300)
+        self.assertEqual(mixer.blend(Bar, timestamp=86400, resolution="D").end_timestamp, 172800)
+        self.assertEqual(mixer.blend(Bar, timestamp=86400, resolution="2D").end_timestamp, 259200)
+        self.assertEqual(mixer.blend(Bar, timestamp=86400, resolution="W").end_timestamp, 691200)
+        self.assertEqual(mixer.blend(Bar, timestamp=86400, resolution="4W").end_timestamp, 2505600)
     
 
     def test_month_timestamps(self):
-        self.assertEqual(mixer.blend(Bar, timestamp=500, resolution="M").end_timestamp, 2678900)
-        self.assertEqual(mixer.blend(Bar, timestamp=12000, resolution="3M").end_timestamp, 7788000)
+        self.assertEqual(mixer.blend(Bar, timestamp=86400, resolution="M").end_timestamp, 2764800)
+        self.assertEqual(mixer.blend(Bar, timestamp=86400, resolution="3M").end_timestamp, 7862400)
     
 
     def test_year_timestamps(self):
-        self.assertEqual(mixer.blend(Bar, timestamp=50000, resolution="Y").end_timestamp, 31586000)
-        self.assertEqual(mixer.blend(Bar, timestamp=50000, resolution="5Y").end_timestamp, 157816400)
+        self.assertEqual(mixer.blend(Bar, timestamp=86400, resolution="Y").end_timestamp, 31622400)
+        self.assertEqual(mixer.blend(Bar, timestamp=86400, resolution="5Y").end_timestamp, 157852800)
 
 
 
