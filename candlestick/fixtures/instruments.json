@@ -1,0 +1,38 @@
+[
+{
+    "model": "candlestick.instrument",
+    "pk": 1,
+    "fields": {
+        "symbol": "AAPL",
+        "name": "Apple Inc.",
+        "exchange": "NASDAQ",
+        "currency": "USD",
+        "timezone": "America/New_York",
+        "category": null
+    }
+},
+{
+    "model": "candlestick.instrument",
+    "pk": 2,
+    "fields": {
+        "symbol": "TSLA",
+        "name": "Tesla Inc.",
+        "exchange": "NASDAQ",
+        "currency": "USD",
+        "timezone": "America/New_York",
+        "category": null
+    }
+},
+{
+    "model": "candlestick.instrument",
+    "pk": 3,
+    "fields": {
+        "symbol": "BTC",
+        "name": "Bitcoin",
+        "exchange": null,
+        "currency": "USD",
+        "timezone": "UTC",
+        "category": null
+    }
+}
+]
