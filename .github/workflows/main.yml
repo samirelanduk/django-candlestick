@@ -25,4 +25,4 @@ jobs:
           pip install coverage==4.5.4
       - name: Test
         run: |
-          coverage run --source=candlestick ./test.sh
+          coverage run --source=candlestick bash ./test.sh
