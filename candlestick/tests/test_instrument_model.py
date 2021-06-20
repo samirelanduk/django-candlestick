@@ -16,7 +16,7 @@ class InstrumentCreationTests(TestCase):
     def test_can_make_full_instrument(self):
         Instrument.objects.create(
             symbol="AAPL", currency="USD", exchange="NASDAQ", category="US",
-            timezone="Europe/London"
+            timezone="Europe/London", name="Apple Inc."
         )
 
 

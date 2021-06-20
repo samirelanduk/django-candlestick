@@ -16,6 +16,7 @@ class Instrument(models.Model):
         ordering = ["symbol"]
 
     symbol = models.CharField(max_length=10)
+    name = models.CharField(max_length=100, blank=True, null=True)
     exchange = models.CharField(max_length=20, blank=True, null=True)
     currency = models.CharField(max_length=20)
     timezone = TimeZoneField(blank=True, null=True)
@@ -57,7 +58,7 @@ class Bar(models.Model):
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, related_name="bars")
 
     def __str__(self):
-        return f"{self.timestamp}: {self.close}"
+        return f"{self.timestamp} ({self.close})"
 
     @receiver(pre_save)
     def pre_save_handler(sender, instance, *args, **kwargs):
