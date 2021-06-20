@@ -15,6 +15,9 @@ setup(
     license="MIT",
     classifiers=[
         "Development Status :: 4 - Beta",
+        "Environment :: Web Environment",
+        "Framework :: Django",
+        "Topic :: Internet :: WWW/HTTP",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Topic :: Office/Business :: Financial :: Investment",
