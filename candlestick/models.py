@@ -49,10 +49,10 @@ class Bar(models.Model):
 
     timestamp = models.IntegerField()
     resolution = models.CharField(validators=[RegexValidator("^\d{0,2}[smHDWMY]$")], max_length=3)
-    open = models.DecimalField(max_digits=9, decimal_places=5)
-    low = models.DecimalField(max_digits=9, decimal_places=5)
-    high = models.DecimalField(max_digits=9, decimal_places=5)
-    close = models.DecimalField(max_digits=9, decimal_places=5)
+    open = models.DecimalField(max_digits=15, decimal_places=6)
+    low = models.DecimalField(max_digits=15, decimal_places=6)
+    high = models.DecimalField(max_digits=15, decimal_places=6)
+    close = models.DecimalField(max_digits=15, decimal_places=6)
     volume = models.IntegerField()
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, related_name="bars")
 
