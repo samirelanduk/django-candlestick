@@ -22,7 +22,7 @@ Add to installed apps:
 ```python
 INSTALLED_APPS = [
     ...
-    "django_candlestick"
+    "candlestick"
     ...
 ]
 ```
@@ -39,6 +39,7 @@ You now have a database of tradeable instruments and their prices.
 
 ```python
 from django_candlestick.models import Instrument, Bar
+
 apple = Instrument.objects.create(
     symbol="AAPL", name="Apple, Inc.", currency="USD", timezone="US/Eastern"
 )
