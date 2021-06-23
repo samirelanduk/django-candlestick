@@ -14,6 +14,7 @@ class Instrument(models.Model):
 
     class Meta:
         ordering = ["symbol"]
+        unique_together = [["symbol", "exchange"]]
 
     symbol = models.CharField(max_length=10)
     name = models.CharField(max_length=100, blank=True, null=True)
