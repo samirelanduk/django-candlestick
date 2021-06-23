@@ -38,7 +38,7 @@ You now have a database of tradeable instruments and their prices.
 ## Use
 
 ```python
-from django_candlestick.models import Instrument, Bar
+from candlestick.models import Instrument, Bar
 
 apple = Instrument.objects.create(
     symbol="AAPL", name="Apple, Inc.", currency="USD", timezone="US/Eastern"
