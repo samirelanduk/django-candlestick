@@ -51,15 +51,15 @@ class Bar(models.Model):
 
     timestamp = models.IntegerField()
     resolution = models.CharField(validators=[RegexValidator("^\d{0,2}[smHDWMY]$")], max_length=3)
-    open = models.DecimalField(max_digits=15, decimal_places=6)
-    low = models.DecimalField(max_digits=15, decimal_places=6)
-    high = models.DecimalField(max_digits=15, decimal_places=6)
-    close = models.DecimalField(max_digits=15, decimal_places=6)
+    open = models.FloatField()
+    low = models.FloatField()
+    high = models.FloatField()
+    close = models.FloatField()
     volume = models.IntegerField()
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, related_name="bars")
 
     def __str__(self):
-        return f"{self.timestamp} ({self.close})"
+        return f"{self.timestamp} ({float(self.close):g})"
 
     @receiver(pre_save)
     def pre_save_handler(sender, instance, *args, **kwargs):
