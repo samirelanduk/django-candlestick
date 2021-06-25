@@ -2,7 +2,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import calendar
 from timezone_field import TimeZoneField
-from django.db import models
+from django.db import models, transaction
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.dispatch import receiver
@@ -37,6 +37,11 @@ class Instrument(models.Model):
 
         bar = self.bars.last()
         if bar: return bar.close
+    
+
+    def fetch(self, resolution):
+        import candlestick.yahoo as yahoo
+        yahoo.fetch(self, resolution)
 
 
 

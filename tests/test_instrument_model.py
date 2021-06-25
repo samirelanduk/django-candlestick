@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from mixer.backend.django import mixer
@@ -53,3 +54,13 @@ class InstrumentLatestBar(TestCase):
         mixer.blend(Bar, timestamp=200, close=80, resolution="m", instrument=instrument)
         mixer.blend(Bar, timestamp=400, close=80, resolution="m")
         self.assertEqual(instrument.latest_price, 50)
+
+
+
+class InstrumentFetchingTests(TestCase):
+
+    @patch("candlestick.yahoo.fetch")
+    def test_can_fetch_data(self, mock_fetch):
+        instrument = mixer.blend(Instrument)
+        instrument.fetch("X")
+        mock_fetch.assert_called_with(instrument, "X")
