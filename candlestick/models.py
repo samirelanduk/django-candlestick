@@ -40,11 +40,16 @@ class Instrument(models.Model):
     
 
     def fetch(self, resolution):
+        """Fetches all available data for this instrument for a given
+        resolution."""
+
         import candlestick.yahoo as yahoo
         yahoo.fetch(self, resolution)
     
 
     def update(self, resolution):
+        """Gets new data for this instrument for a given resolution."""
+        
         import candlestick.yahoo as yahoo
         yahoo.update(self, resolution)
 
@@ -65,7 +70,7 @@ class Bar(models.Model):
     low = models.FloatField()
     high = models.FloatField()
     close = models.FloatField()
-    volume = models.IntegerField()
+    volume = models.BigIntegerField()
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE, related_name="bars")
 
     def __str__(self):
