@@ -15,7 +15,7 @@ def fetch(instrument, resolution):
     instrument.bars.filter(
         resolution=resolution, timestamp__gte=start, timestamp__lte=end
     ).delete()
-    save_bars(history, instrument, resolution)
+    return save_bars(history, instrument, resolution)
 
 
 def update(instrument, resolution):
@@ -31,7 +31,7 @@ def update(instrument, resolution):
     instrument.bars.filter(
         resolution=resolution, timestamp__gte=start
     ).delete()
-    save_bars(history, instrument, resolution)
+    return save_bars(history, instrument, resolution)
 
 
 def save_bars(df, instrument, resolution):
@@ -43,7 +43,7 @@ def save_bars(df, instrument, resolution):
         high=round(bar.High, 3), low=round(bar.Low, 3),
         volume=int(bar.Volume), timestamp=datetime.timestamp(bar.name)
     ) for bar in df.replace({np.nan: 0}).iloc()]
-    Bar.objects.bulk_create(bars)
+    return Bar.objects.bulk_create(bars)
 
 
 def get_yahoo_params(resolution):

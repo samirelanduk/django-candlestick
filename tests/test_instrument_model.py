@@ -62,8 +62,9 @@ class InstrumentFetchingTests(TestCase):
     @patch("candlestick.yahoo.fetch")
     def test_can_fetch_data(self, mock_fetch):
         instrument = mixer.blend(Instrument)
-        instrument.fetch("X")
+        bars = instrument.fetch("X")
         mock_fetch.assert_called_with(instrument, "X")
+        self.assertEqual(bars, mock_fetch.return_value)
 
 
 
@@ -72,5 +73,6 @@ class InstrumentUpdatingTests(TestCase):
     @patch("candlestick.yahoo.update")
     def test_can_update_data(self, mock_update):
         instrument = mixer.blend(Instrument)
-        instrument.update("X")
+        bars = instrument.update("X")
         mock_update.assert_called_with(instrument, "X")
+        self.assertEqual(bars, mock_update.return_value)

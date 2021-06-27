@@ -44,14 +44,14 @@ class Instrument(models.Model):
         resolution."""
 
         import candlestick.yahoo as yahoo
-        yahoo.fetch(self, resolution)
+        return yahoo.fetch(self, resolution)
     
 
     def update(self, resolution):
         """Gets new data for this instrument for a given resolution."""
-        
+
         import candlestick.yahoo as yahoo
-        yahoo.update(self, resolution)
+        return yahoo.update(self, resolution)
 
 
 

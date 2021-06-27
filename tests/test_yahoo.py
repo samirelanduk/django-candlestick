@@ -39,11 +39,12 @@ class FetchTests(TestCase):
 
     def test_can_fetch_bars(self):
         with self.assertNumQueries(1):
-            fetch(self.instrument, "D")
+            bars = fetch(self.instrument, "D")
         self.mock_ticker.assert_called_with("AAPL")
         self.mock_params.assert_called_with("D")
         self.Ticker.history.assert_called_with(period="max", interval="D")
         self.mock_save.assert_called_with(self.Ticker.history.return_value, self.instrument, "D")
+        self.assertEqual(bars, self.mock_save.return_value)
 
 
     def test_can_fetch_bars_and_replace(self):
@@ -51,12 +52,13 @@ class FetchTests(TestCase):
         mixer.blend(Bar, timestamp=946684800, resolution="D", instrument=self.instrument)
         mixer.blend(Bar, timestamp=946857600, resolution="W", instrument=self.instrument)
         with self.assertNumQueries(1):
-            fetch(self.instrument, "D")
+            bars = fetch(self.instrument, "D")
         self.mock_ticker.assert_called_with("AAPL")
         self.mock_params.assert_called_with("D")
         self.Ticker.history.assert_called_with(period="max", interval="D")
         self.mock_save.assert_called_with(self.Ticker.history.return_value, self.instrument, "D")
         self.assertEqual(self.instrument.bars.filter(resolution="D").count(), 1)
+        self.assertEqual(bars, self.mock_save.return_value)
 
 
 
@@ -92,12 +94,13 @@ class UpdateTests(TestCase):
 
     def test_updating(self):
         mixer.blend(Bar, timestamp=946684800, resolution="D", instrument=self.instrument)
-        update(self.instrument, "D")
+        bars = update(self.instrument, "D")
         self.mock_start.assert_called_with(946684800, "D")
         self.mock_ticker.assert_called_with("AAPL")
         self.Ticker.history.assert_called_with(start="1970-01-02", interval="1d")
         self.mock_save.assert_called_with(self.Ticker.history.return_value, self.instrument, "D")
         self.assertEqual(self.instrument.bars.filter(resolution="D").count(), 0)
+        self.assertEqual(bars, self.mock_save.return_value)
 
 
 
@@ -118,8 +121,9 @@ class BarSavingTests(TestCase):
                 pd.Timestamp(946857600, unit="s", tzinfo=timezone.utc),
             ]
         )
-        save_bars(df, instrument, "D")
+        bars = save_bars(df, instrument, "D")
         self.assertEqual(instrument.bars.count(), 3)
+        self.assertEqual(len(bars), 3)
         bar = instrument.bars.first()
         self.assertEqual(bar.open, 10)
         self.assertEqual(bar.volume, 100)
