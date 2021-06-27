@@ -42,6 +42,11 @@ class Instrument(models.Model):
     def fetch(self, resolution):
         import candlestick.yahoo as yahoo
         yahoo.fetch(self, resolution)
+    
+
+    def update(self, resolution):
+        import candlestick.yahoo as yahoo
+        yahoo.update(self, resolution)
 
 
 
