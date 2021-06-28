@@ -17,7 +17,7 @@ class Instrument(models.Model):
         unique_together = [["symbol", "exchange"]]
 
     symbol = models.CharField(max_length=10)
-    name = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(max_length=300, blank=True, null=True)
     exchange = models.CharField(max_length=20, blank=True, null=True)
     currency = models.CharField(max_length=20)
     timezone = TimeZoneField(blank=True, null=True)
