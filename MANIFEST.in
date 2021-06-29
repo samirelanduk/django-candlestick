@@ -1,1 +1,2 @@
 recursive-include candlestick/migrations *.py
+recursive-include candlestick/management *.py

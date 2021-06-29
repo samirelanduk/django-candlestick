@@ -5,11 +5,9 @@ import os
 with open("README.md") as f:
     long_description = f.read()
 
-migrations = [f.split(os.path.sep)[-1] for f in glob("candlestick/migrations/*.py")]
-
 setup(
     name="django_candlestick",
-    version="0.1.0",
+    version="0.2.0",
     description="A django library for tracking and storing the prices of assets over time.",
     long_description=long_description,
     long_description_content_type="text/markdown",
