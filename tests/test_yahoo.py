@@ -143,8 +143,8 @@ class YahooParamsFromResolutionTests(TestCase):
         self.assertEqual(get_yahoo_params("2m"), ("2m", "7d"))
         self.assertEqual(get_yahoo_params("5m"), ("5m", "60d"))
         self.assertEqual(get_yahoo_params("H"), ("60m", "2y"))
-        self.assertEqual(get_yahoo_params("D"), ("1d", "max"))
-        self.assertEqual(get_yahoo_params("W"), ("1wk", "max"))
+        self.assertEqual(get_yahoo_params("D"), ("1d", "100y"))
+        self.assertEqual(get_yahoo_params("W"), ("1wk", "100y"))
     
 
     def test_can_handle_invalid_resolution(self):

@@ -55,8 +55,8 @@ def get_yahoo_params(resolution):
     lookup = {
         "m": ("1m", "7d"), "2m": ("2m", "7d"), "5m": ("5m", "60d"),
         "15m": ("15m", "60d"), "30m": ("30m", "60d"), "H": ("60m", "2y"),
-        "D": ("1d", "max"), "5D": ("5d", "max"), "W": ("1wk", "max"),
-        "M": ("1mo", "max"), "3M": ("3mo", "max")
+        "D": ("1d", "100y"), "5D": ("5d", "100y"), "W": ("1wk", "100y"),
+        "M": ("1mo", "100y"), "3M": ("3mo", "100y")
     }
     if resolution not in lookup:
         raise ValueError(f"Resolution {resolution} is not valid - must be {', '.join(lookup.keys())}")
