@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from candlestick.models import Instrument
+from time import time
 
 class Command(BaseCommand):
     help = "Fetches all available data for an instrument"
@@ -16,7 +17,12 @@ class Command(BaseCommand):
             instrument = Instrument.objects.get(symbol=symbol)
         except Instrument.DoesNotExist:
             raise CommandError('Instrument "%s" does not exist' % symbol)
-        bars = instrument.fetch(options["resolution"])
+        try:
+            start = time()
+            bars = instrument.fetch(options["resolution"])
+            duration = round(time() - start, 2)
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"{symbol}: {str(e)}"))
         self.stdout.write(self.style.SUCCESS(
-            f"{len(bars)} bar{'' if len(bars) == 1 else 's'} saved for {symbol}"
+            f"{len(bars)} {options['resolution']} bar{'' if len(bars) == 1 else 's'} saved for {symbol} ({duration}s)"
         ))
