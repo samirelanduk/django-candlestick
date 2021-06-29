@@ -37,6 +37,8 @@ You now have a database of tradeable instruments and their prices.
 
 ## Use
 
+### Manual
+
 ```python
 from candlestick.models import Instrument, Bar
 
@@ -48,4 +50,37 @@ bar = Bar.objects.create(
     timestamp=1579887000, resolution="H", instrument=apple
 )
 print(bar.datetime) # 2020-01-24 12:30:00-05:00
+```
+
+### From YAHOO
+
+```python
+apple.fetch(resolution="M") # Gets all bars for the month resolution
+apple.update(resolution="H") # Gets new bars for the H resolution
+```
+
+### At command line
+
+To fetch bars for an instrument:
+
+```bash
+$ python manage.py fetch AAPL D
+```
+
+To update bars for an instrument:
+
+```bash
+$ python manage.py update AAPL D
+```
+
+To update bars for multiple instruments:
+
+```bash
+$ python manage.py update AAPL,AMZN D
+```
+
+To update bars for all instruments:
+
+```bash
+$ python manage.py update all D
 ```
